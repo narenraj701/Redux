@@ -1,4 +1,4 @@
-const { createStore } = require("redux");
+const { createStore, combineReducers } = require("redux");
 
 const BUY_CAKE='BUY_CAKE';
 const BUY_ICECREAM='BUY_ICECREAM';
@@ -17,29 +17,40 @@ function buyIceCream(){
     }
 };
 
-const initialState={
-    noOfCakes:10,
+const initialCakeState={
+    noOfCakes:10
+};
+
+const initialIceCreamState={
     noOfIceCreams:30
 };
 
-//reducer
-const reducer=(state=initialState,action)=>{
+//reducers
+const cakeReducer=(state=initialCakeState,action)=>{
     switch(action.type){
         case BUY_CAKE: return {
             ...state,
             noOfCakes:state.noOfCakes-1
         }
-        case BUY_ICECREAM:{
-            return {
-              ...state,
-              noOfIceCreams:state.noOfIceCreams-1  
-            }
+        default: return state;
+    }
+};
+
+const iceCreamReducer=(state=initialIceCreamState,action)=>{
+    switch(action.type){
+        case BUY_ICECREAM: return {
+            ...state,
+            noOfIceCreams:state.noOfIceCreams-1
         }
         default: return state;
     }
 };
 
-const store=createStore(reducer);
+const rootReducer=combineReducers({
+    cake:cakeReducer,
+    iceCream:iceCreamReducer
+})
+const store=createStore(rootReducer);
 console.log('initial state',store.getState());
 const unsubscribe=store.subscribe(()=>console.log('Updated State ',store.getState()));
 store.dispatch(buyCake());
